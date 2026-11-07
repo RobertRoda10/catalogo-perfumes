@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo de Perfumes y Decants</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #101114;
+      color: #f5f1e9;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      padding: 45px 20px;
+      text-align: center;
+      background: #1b1c20;
+    }
+    h1 { color: #d9b875; margin: 0 0 12px; }
+    header p { color: #c7c2ba; }
+    main { max-width: 1100px; margin: auto; padding: 25px 15px; }
+    input, select {
+      padding: 13px;
+      border: 1px solid #48443a;
+      background: #25262a;
+      color: white;
+      border-radius: 9px;
+      width: 100%;
+      font-size: 15px;
+    }
+    .filtros {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px,1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .productos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+      gap: 18px;
+    }
+    .producto {
+      background: #202126;
+      border: 1px solid #373638;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .producto img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      background: #fff;
+    }
+    .info { padding: 17px; }
+    .marca { color: #d9b875; font-size: 13px; }
+    h2 { font-size: 19px; margin: 8px 0; }
+    .detalle { color: #c6c3bd; font-size: 14px; }
+    .stock { color: #87d4a2; font-weight: bold; }
+    .agotado { color: #ee9696; }
+    a.boton {
+      display: block;
+      padding: 12px;
+      border-radius: 8px;
+      background: #d9b875;
+      color: #171717;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 14px;
+    }
+    footer { text-align: center; padding: 35px; color: #999; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>PERFUMERÍA</h1>
+  <p>Descubrí nuestra colección de perfumes y decants</p>
+  <p>Catálogo de productos disponibles</p>
+</header>
+
+<main>
+  <div class="filtros">
+    <input id="buscar" placeholder="Buscar perfume o marca...">
+    <select id="categoria">
+      <option value="">Todas las categorías</option>
+      <option value="Masculino">Masculinos</option>
+      <option value="Femenino">Femeninos</option>
+      <option value="Unisex">Unisex</option>
+      <option value="Decant">Decants</option>
+    </select>
+    <select id="stock">
+      <option value="">Todo el stock</option>
+      <option value="true">Disponibles</option>
+      <option value="false">Agotados</option>
+    </select>
+  </div>
+
+  <section class="productos" id="productos"></section>
+</main>
+<footer>Consultanos por WhatsApp o Instagram</footer>
+
+<script>
+  // EDITÁ ESTA SECCIÓN PARA ACTUALIZAR PRODUCTOS
+  const whatsapp = ""; // Ejemplo: 5493482123456
+
+  const perfumes = [
+    {
+      nombre: "Le Male Le Parfum",
+      marca: "Jean Paul Gaultier",
+      categoria: "Masculino",
+      tamaño: "125 ml",
+      descripcion: "Fragancia intensa y elegante",
+      disponible: true,
+      imagen: ""
+    },
+    {
+      nombre: "Yara",
+      marca: "Lattafa",
+      categoria: "Femenino",
+      tamaño: "100 ml",
+      descripcion: "Fragancia dulce y cremosa",
+      disponible: true,
+      imagen: ""
+    },
+    {
+      nombre: "Decant de ejemplo",
+      marca: "Varias marcas",
+      categoria: "Decant",
+      tamaño: "5 ml",
+      descripcion: "Probá antes de elegir tu perfume",
+      disponible: false,
+      imagen: ""
+    }
+  ];
+  // FIN DE LA SECCIÓN EDITABLE
+
+  const contenedor = document.getElementById("productos");
+
+  function mostrar() {
+    const busqueda = document.getElementById("buscar").value.toLowerCase();
+    const categoria = document.getElementById("categoria").value;
+    const stock = document.getElementById("stock").value;
+
+    const filtrados = perfumes.filter(p => {
+      const coincideTexto = (p.nombre + " " + p.marca)
+        .toLowerCase().includes(busqueda);
+      return coincideTexto &&
+        (!categoria || p.categoria === categoria) &&
+        (!stock || String(p.disponible) === stock);
+    });
+
+    contenedor.innerHTML = "";
+
+    filtrados.forEach(p => {
+      const tarjeta = document.createElement("article");
+      tarjeta.className = "producto";
+
+      if (p.imagen) {
+        const foto = document.createElement("img");
+        foto.src = p.imagen;
+        foto.alt = p.nombre;
+        tarjeta.appendChild(foto);
+      }
+
+      const info = document.createElement("div");
+      info.className = "info";
+
+      const marca = document.createElement("div");
+      marca.className = "marca";
+      marca.textContent = p.marca;
+
+      const nombre = document.createElement("h2");
+      nombre.textContent = p.nombre;
+
+      const detalle = document.createElement("p");
+      detalle.className = "detalle";
+      detalle.textContent = p.tamaño + " · " + p.descripcion;
+
+      const estado = document.createElement("p");
+      estado.className = p.disponible ? "stock" : "agotado";
+      estado.textContent = p.disponible ? "● Disponible" : "● Agotado";
+
+      info.append(marca, nombre, detalle, estado);
+
+      if (whatsapp && p.disponible) {
+        const boton = document.createElement("a");
+        boton.className = "boton";
+        boton.textContent = "Consultar por WhatsApp";
+        boton.href = "https://wa.me/" + whatsapp +
+          "?text=" + encodeURIComponent("Hola, quiero consultar por " + p.nombre);
+        boton.target = "_blank";
+        boton.rel = "noopener noreferrer";
+        info.appendChild(boton);
+      }
+
+      tarjeta.appendChild(info);
+      contenedor.appendChild(tarjeta);
+    });
+
+    if (!filtrados.length) {
+      contenedor.textContent = "No se encontraron productos.";
+    }
+  }
+
+  ["buscar", "categoria", "stock"].forEach(id => {
+    document.getElementById(id).addEventListener("input", mostrar);
+  });
+  mostrar();
+</script>
+</body>
+</html>
